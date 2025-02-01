@@ -1,0 +1,35 @@
+[
+    {
+      "id": 1,
+      "title": "Camiseta Negra",
+      "description": "Camiseta de algodón color negro",
+      "code": "CACN-NEGROO1",
+      "price": 26.00,
+      "status": true,
+      "stock": 50,
+      "category": "ropa",
+      "thumbnails": []
+    },
+    {
+      "id": 2,
+      "title": "Jeans Azul",
+      "description": "Pantalón vaquero azul clásico",
+      "code": "PVC-AZULl2",
+      "price": 40.00,
+      "status": true,
+      "stock": 30,
+      "category": "ropa",
+      "thumbnails": []
+    },
+    {
+      "id": 3,
+      "title": "Zapatillas Deportivas",
+      "description": "Zapatillas blancas para correr",
+      "code": "ZPC-BLANCASS3",
+      "price": 60.00,
+      "status": true,
+      "stock": 20,
+      "category": "calzado",
+      "thumbnails": []
+    }
+  ]
