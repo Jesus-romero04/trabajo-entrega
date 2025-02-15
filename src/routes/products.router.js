@@ -7,6 +7,12 @@ const readProducts = () => JSON.parse(fs.readFileSync(productsFile));
 const saveProducts = (products) => fs.writeFileSync(productsFile, JSON.stringify(products, null, 2));
 
 
+router.get('/', (req, res) => {
+    const products = readProducts();
+    res.json(products);
+});
+
+
 router.get('/:pid', (req, res) => {
     const products = readProducts();
     const product = products.find(p => p.id === parseInt(req.params.pid));

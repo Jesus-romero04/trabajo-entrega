@@ -1,7 +1,7 @@
 {
   "name": "ecommerce",
   "version": "1.0.0",
-  "description": "E-commerce de ropa ",
+  "description": "E-commerce de ropa con Node.js y Express",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
