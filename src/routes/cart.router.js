@@ -1,8 +1,14 @@
-const express = require('express');
-const fs = require('fs');
-const router = express.Router();
-const cartsFile = './src/data/carts.json';
+import { Router } from 'express';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
+// Configuración para obtener __dirname con ES Modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const cartsFile = path.join(__dirname, '../data/carts.json');
+
+const router = Router();
 
 const readCarts = () => {
     try {
@@ -23,19 +29,16 @@ const saveCarts = (carts) => {
     }
 };
 
-
 router.get('/', (req, res) => {
     const carts = readCarts();
     res.json(carts);
 });
-
 
 router.get('/products', (req, res) => {
     const carts = readCarts();
     const allProducts = carts.flatMap(cart => cart.products);
     res.json(allProducts);
 });
-
 
 router.post('/', (req, res) => {
     const carts = readCarts();
@@ -48,7 +51,6 @@ router.post('/', (req, res) => {
     res.status(201).json(newCart);
 });
 
-
 router.get('/:cid', (req, res) => {
     const carts = readCarts();
     const cartId = parseInt(req.params.cid);
@@ -57,7 +59,6 @@ router.get('/:cid', (req, res) => {
     const cart = carts.find(c => c.id === cartId);
     cart ? res.json(cart.products) : res.status(404).json({ error: "Carrito no encontrado" });
 });
-
 
 router.post('/:cid/product/:pid', (req, res) => {
     const carts = readCarts();
@@ -82,4 +83,4 @@ router.post('/:cid/product/:pid', (req, res) => {
     res.json(cart);
 });
 
-module.exports = router;
+export default router;
