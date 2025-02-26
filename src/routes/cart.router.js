@@ -1,86 +1,62 @@
-import { Router } from 'express';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import express from "express";
+import CartManager from "../CartManager.js";
 
+// Instanciamos el router de express para manejar las rutas
+const cartRouter = express.Router();
+// Instanciamos el manejador de nuestro archivo de carrito
+const cartManager = new CartManager("./src/data/cart.json");
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const cartsFile = path.join(__dirname, '../data/carts.json');
-
-const router = Router();
-
-const readCarts = () => {
-    try {
-        if (!fs.existsSync(cartsFile)) return [];
-        const data = fs.readFileSync(cartsFile, 'utf-8');
-        return data ? JSON.parse(data) : [];
-    } catch (error) {
-        console.error("Error leyendo el archivo de carritos:", error);
-        return [];
-    }
-};
-
-const saveCarts = (carts) => {
-    try {
-        fs.writeFileSync(cartsFile, JSON.stringify(carts, null, 2));
-    } catch (error) {
-        console.error("Error guardando el archivo de carritos:", error);
-    }
-};
-
-router.get('/', (req, res) => {
-    const carts = readCarts();
-    res.json(carts);
+// Crear un carrito vacío con ID autogenerado
+cartRouter.post("/", async (req, res) => {
+  try {
+    const carts = await cartManager.addCart();
+    res.status(201).send(carts);
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
 });
 
-router.get('/products', (req, res) => {
-    const carts = readCarts();
-    const allProducts = carts.flatMap(cart => cart.products);
-    res.json(allProducts);
+// Obtener productos de un carrito por ID
+cartRouter.get("/:cid", async (req, res) => {
+  try {
+    const cartProducts = await cartManager.getCartById(req.params.cid);
+    res.status(200).send(cartProducts);
+  } catch (error) {
+    res.status(404).send({ message: error.message });
+  }
 });
 
-router.post('/', (req, res) => {
-    const carts = readCarts();
-    const newCart = {
-        id: carts.length > 0 ? carts[carts.length - 1].id + 1 : 1,
-        products: []
-    };
-    carts.push(newCart);
-    saveCarts(carts);
-    res.status(201).json(newCart);
-});
-
-router.get('/:cid', (req, res) => {
-    const carts = readCarts();
-    const cartId = parseInt(req.params.cid);
-    if (isNaN(cartId)) return res.status(400).json({ error: "ID de carrito no válido" });
-
-    const cart = carts.find(c => c.id === cartId);
-    cart ? res.json(cart.products) : res.status(404).json({ error: "Carrito no encontrado" });
-});
-
-router.post('/:cid/product/:pid', (req, res) => {
-    const carts = readCarts();
-    const cartId = parseInt(req.params.cid);
-    const productId = parseInt(req.params.pid);
-
-    if (isNaN(cartId) || isNaN(productId)) {
-        return res.status(400).json({ error: "ID de carrito o producto no válido" });
+// Agregar producto al carrito, sumando cantidad si ya existe
+cartRouter.post("/:cid/product/:pid", async (req, res) => {
+  try {
+    const { quantity } = req.body;
+    if (!quantity || quantity <= 0) {
+      return res.status(400).send({ message: "La cantidad debe ser mayor a 0." });
     }
 
-    const cart = carts.find(c => c.id === cartId);
-    if (!cart) return res.status(404).json({ error: "Carrito no encontrado" });
+    const product = { id: parseInt(req.params.pid), quantity };
+    const updatedCart = await cartManager.addProductInCartById(req.params.cid, product);
 
-    const existingProduct = cart.products.find(p => p.id === productId);
-    if (existingProduct) {
-        existingProduct.quantity += 1;
-    } else {
-        cart.products.push({ id: productId, quantity: 1 });
-    }
-
-    saveCarts(carts);
-    res.json(cart);
+    res.status(201).send({
+      message: `Producto con id: ${req.params.pid} agregado al carrito con id: ${req.params.cid}`,
+      cart: updatedCart
+    });
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
 });
 
-export default router;
+// Eliminar producto del carrito
+cartRouter.delete("/:cid/product/:pid", async (req, res) => {
+  try {
+    const updatedCart = await cartManager.deleteProductFromCart(req.params.cid, req.params.pid);
+    res.status(200).send({
+      message: `Producto con id: ${req.params.pid} eliminado del carrito con id: ${req.params.cid}`,
+      cart: updatedCart
+    });
+  } catch (error) {
+    res.status(404).send({ message: error.message });
+  }
+});
+
+export default cartRouter;

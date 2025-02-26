@@ -1,58 +1,56 @@
-import { Router } from 'express';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import express from "express";
+import ProductManager from "../ProductManager.js";
 
+//instanciamos el router de express para manejar las rutas
+const productsRouter = express.Router();
+//instanciamos el manejador de nuestro archivo de productos
+const productManager = new ProductManager("./src/data/products.json");
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const productsFile = path.join(__dirname, '../data/products.json');
+productsRouter.get("/", async (req, res) => {
+  try {
+    const data = await productManager.getProducts();
+    res.status(200).send(data);
+  } catch (error) {
+    res.status(500).send({ message: error.message })
+  }
+})
 
-const router = Router();
-
-const readProducts = () => JSON.parse(fs.readFileSync(productsFile, 'utf-8'));
-const saveProducts = (products) => fs.writeFileSync(productsFile, JSON.stringify(products, null, 2));
-
-router.get('/', (req, res) => {
-    const products = readProducts();
-    res.json(products);
+productsRouter.get("/:pid", async (req, res) => {
+  try {
+    const products = await productManager.getProductById(req.params.pid);
+    res.status(200).send(products);
+  } catch (error) {
+    res.status(404).send({ message: error.message });
+  }
 });
 
-router.get('/:pid', (req, res) => {
-    const products = readProducts();
-    const product = products.find(p => p.id === parseInt(req.params.pid));
-    product ? res.json(product) : res.status(404).json({ error: "Producto no encontrado" });
+productsRouter.post("/", async (req, res) => {
+  try {
+    const newProduct = req.body;
+    const product = await productManager.addProduct(newProduct);
+    res.status(201).send(product);
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
 });
 
-router.post('/', (req, res) => {
-    const products = readProducts();
-    const newProduct = {
-        id: products.length > 0 ? products[products.length - 1].id + 1 : 1,
-        ...req.body
-    };
-    products.push(newProduct);
-    saveProducts(products);
-    res.status(201).json(newProduct);
+productsRouter.put("/:pid", async (req, res) => {
+  try {
+    const updatedProduct = req.body;
+    const products = await productManager.setProductById(req.params.pid, updatedProduct);
+    res.status(200).send(products);
+  } catch (error) {
+    res.status(404).send({ message: error.message });
+  }
 });
 
-router.put('/:pid', (req, res) => {
-    const products = readProducts();
-    const index = products.findIndex(p => p.id === parseInt(req.params.pid));
-    if (index === -1) return res.status(404).json({ error: "Producto no encontrado" });
-
-    products[index] = { ...products[index], ...req.body };
-    saveProducts(products);
-    res.json(products[index]);
+productsRouter.delete("/:pid", async (req, res) => {
+  try {
+    await productManager.deleteProductById(req.params.pid);
+    res.status(200).send({ message: `Producto con id: ${req.params.pid} eliminado` });
+  } catch (error) {
+    res.status(404).send({ message: error.message });
+  }
 });
 
-router.delete('/:pid', (req, res) => {
-    const products = readProducts();
-    const filteredProducts = products.filter(p => p.id !== parseInt(req.params.pid));
-    if (filteredProducts.length === products.length) {
-        return res.status(404).json({ error: "Producto no encontrado" });
-    }
-    saveProducts(filteredProducts);
-    res.json({ message: "Producto eliminado" });
-});
-
-export default router;
+export default productsRouter;

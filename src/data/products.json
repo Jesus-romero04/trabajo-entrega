@@ -1,35 +1,35 @@
 [
-    {
-      "id": 1,
-      "title": "Camiseta Negra",
-      "description": "Camiseta de algodón color negro",
-      "code": "CACN-NEGROO1",
-      "price": 26.00,
-      "status": true,
-      "stock": 50,
-      "category": "ropa",
-      "thumbnails": []
-    },
-    {
-      "id": 2,
-      "title": "Jeans Azul",
-      "description": "Pantalón vaquero azul clásico",
-      "code": "PVC-AZULl2",
-      "price": 40.00,
-      "status": true,
-      "stock": 30,
-      "category": "ropa",
-      "thumbnails": []
-    },
-    {
-      "id": 3,
-      "title": "Zapatillas Deportivas",
-      "description": "Zapatillas blancas para correr",
-      "code": "ZPC-BLANCASS3",
-      "price": 60.00,
-      "status": true,
-      "stock": 20,
-      "category": "calzado",
-      "thumbnails": []
-    }
-  ]
+  {
+    "id": 1,
+    "title": "Camiseta Negra Nike",
+    "description": "Camiseta deportiva de algodón color negro con logo Nike",
+    "code": "CMNT-NIKE01",
+    "price": 29.99,
+    "status": true,
+    "stock": 45,
+    "category": "ropa",
+    "thumbnails": []
+  },
+  {
+    "id": 2,
+    "title": "Jeans Azul Levi's",
+    "description": "Pantalón vaquero azul clásico de Levi's",
+    "code": "JNLS-LEVI02",
+    "price": 59.99,
+    "status": true,
+    "stock": 25,
+    "category": "ropa",
+    "thumbnails": []
+  },
+  {
+    "id": 3,
+    "title": "Zapatillas Adidas Ultraboost",
+    "description": "Zapatillas Adidas ideales para correr y entrenar",
+    "code": "ZPAD-ULTR03",
+    "price": 120,
+    "status": true,
+    "stock": 20,
+    "category": "calzado",
+    "thumbnails": []
+  }
+]
