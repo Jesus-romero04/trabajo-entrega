@@ -52,7 +52,7 @@ io.on("connection", (socket) => {
   // Manejar la eliminación de un producto
   socket.on("deleteProduct", async (productId) => {
     try {
-      const deletedProduct = await productManager.deleteProductById(productId); // ✅ Método correcto
+      const deletedProduct = await productManager.deleteProductById(productId); // 
       if (deletedProduct) {
         io.emit("productDeleted", productId); // Emitir evento para actualizar la lista
       }

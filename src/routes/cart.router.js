@@ -1,9 +1,9 @@
 import express from "express";
 import CartManager from "../CartManager.js";
 
-// Instanciamos el router de express para manejar las rutas
+
 const cartRouter = express.Router();
-// Instanciamos el manejador de nuestro archivo de carrito
+
 const cartManager = new CartManager("./src/data/cart.json");
 
 // Crear un carrito vacío con ID autogenerado
