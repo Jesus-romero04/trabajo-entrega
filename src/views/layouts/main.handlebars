@@ -1,27 +1,14 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>E-commerce de Ropa</title>
-  <link rel="stylesheet" href="/css/styles.css"> <!-- Enlace opcional para tus estilos -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/css/style.css">
+    <title>{{title}}</title>
 </head>
 <body>
-  <header>
-    <nav>
-      <a href="/">Inicio</a> |
-    </nav>
-  </header>
-
-  <main>
+    {{!-- Aca se va a renderizar los elementos. --}}
+    {{!-- Unica vez que utilizamos 3 pares de llaves --}}
     {{{body}}}
-  </main>
-
-  <footer>
-    <p>&copy; 2025 E-commerce de Ropa</p>
-  </footer>
-
-  <script src="/socket.io/socket.io.js"></script> 
-  <script src="/js/index.js"></script> 
 </body>
 </html>

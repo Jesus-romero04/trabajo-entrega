@@ -1,68 +1,88 @@
 import express from "express";
-import productsRouter from "./routes/products.router.js";
-import cartRouter from "./routes/cart.router.js";
+import { urlencoded } from "express";
 import { engine } from "express-handlebars";
 import { Server } from "socket.io";
-import http from "http";
-import viewsRouter from "./routes/views.router.js";
-import ProductManager from "./ProductManager.js";
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
+import ProductManager from "./dao/db/product-manager-db.js";
+// importamos la conexion de mongoose.
+import connection from "./database.js";
 const app = express();
-const server = http.createServer(app);
-const io = new Server(server);
-
-// Configuración de Handlebars
-app.engine("handlebars", engine());
-app.set("view engine", "handlebars");
-app.set("views", path.join(__dirname, "./views"));
-
-// Puerto del servidor
 const PORT = 8080;
 
-// Middlewares
+// Routes
+import productRouter from "./routes/products.router.js";
+import cartRouter from "./routes/carts.router.js";
+import viewsRouter from "./routes/views.router.js";
+
+// Middleware
+// Utilizaremos el formato Json.
 app.use(express.json());
-app.use(express.static(path.join(__dirname, "../public")));
+// para url complejas
+app.use(urlencoded({extended:true}));
+// Nuestros archivos estaticos
+app.use(express.static("src/public"));
+
+
 
 // Rutas
-app.use("/api/products", productsRouter);
+// Al utilizar estas rutas, evitamos repeticiones en el codigo de cada router.
+app.use("/api/products", productRouter );
 app.use("/api/carts", cartRouter);
 app.use("/", viewsRouter);
 
-// WebSockets
-const productManager = new ProductManager("./src/data/products.json");
+// Handlebars , configuracion.
+app.engine("handlebars", engine());
 
-io.on("connection", (socket) => {
-  console.log("Nuevo usuario conectado");
+// Renderizar los archivos que tengan esa extension.
+app.set("view engine", "handlebars");
 
-  // Manejar la creación de un nuevo producto
-  socket.on("newProduct", async (productData) => {
-    try {
-      const newProduct = await productManager.addProduct(productData);
-      io.emit("productAdded", newProduct); // Emitir a todos los clientes conectados
-    } catch (error) {
-      console.log("Error al añadir el nuevo producto:", error.message);
-    }
-  });
+// Donde se encuentran los archivos a renderizar.
+app.set("views", "./src/views");
 
-  // Manejar la eliminación de un producto
-  socket.on("deleteProduct", async (productId) => {
-    try {
-      const deletedProduct = await productManager.deleteProductById(productId); // 
-      if (deletedProduct) {
-        io.emit("productDeleted", productId); // Emitir evento para actualizar la lista
-      }
-    } catch (error) {
-      console.log("Error al eliminar el producto:", error.message);
-    }
-  });
+// Manager para actualizar info productos
+const manager = new ProductManager();
+
+app.get("/", (req,res) => {
+
+res.send("Pagina de inicio, bienvenido 😁👌");
 });
 
-// Iniciar servidor
-server.listen(PORT, () => {
-  console.log(`Servidor iniciado en: http://localhost:${PORT}`);
+// Creamos nuestro servidor.
+// utilizamos una referencia de nuestro servidor.
+const httpServer = app.listen(PORT, () => {
+    // Este lo dejo para ingresar mas rapido al navegador.
+    console.log(`servidor escuchando desde el puerto: http://localhost:${PORT}`);
 });
+
+
+
+
+// Configuramos el servidor con socket, io se recomienda para la instancia del backend.
+const io = new Server(httpServer);
+
+// abrimos el servidor con la conexion desde el back
+// acuerdo de conexion. recibimos el socket de cliente como parametro para poder recibir y enviar mensajes.
+
+io.on('connection', async (socket) => {
+
+    // enviamos los productos al cliente.
+    socket.emit("products", await manager.getProducts());
+
+    // Eliminamos el producto.
+    socket.on("productDelete", async (id) => {
+        await manager.deleteProduct(id);
+
+        // volvemos a enviar la lista actualizada.
+        socket.emit("products", await manager.getProducts() );
+    } );
+
+    // recibimos el nuevo producto:
+    socket.on("newProduct", async (data) => {
+        await manager.addProduct(data);
+
+        // volvemos a enviar la lista actualizada.
+        const updatedProducts = await manager.getProducts();
+        io.emit('updateProducts', updatedProducts);
+    });
+
+
+} );

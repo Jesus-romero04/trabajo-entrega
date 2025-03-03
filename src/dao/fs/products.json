@@ -1,0 +1,79 @@
+[
+  {
+    "id": 1,
+    "title": "Camiseta Negra Nike",
+    "description": "Camiseta deportiva de algodón color negro con logo Nike",
+    "code": "CMNT-NIKE01",
+    "price": 29.99,
+    "status": true,
+    "stock": 45,
+    "category": "ropa",
+    "thumbnails": []
+  },
+  {
+    "id": 3,
+    "title": "Jeans Azul Levi's",
+    "description": "Pantalón vaquero azul clásico de Levi's",
+    "code": "JNLS-LEVI02",
+    "price": 59.99,
+    "status": true,
+    "stock": 25,
+    "category": "ropa",
+    "thumbnails": []
+  },
+  {
+    "id": 4,
+    "title": "Zapatillas Adidas Ultraboost",
+    "description": "Zapatillas Adidas ideales para correr y entrenar",
+    "code": "ZPAD-ULTR03",
+    "price": 120,
+    "status": true,
+    "stock": 20,
+    "category": "calzado",
+    "thumbnails": []
+  },
+  {
+    "id": 5,
+    "title": "Sudadera Puma Roja",
+    "description": "Sudadera deportiva de algodón color rojo con logo Puma",
+    "code": "SDP-PUMA04",
+    "price": 39.99,
+    "status": true,
+    "stock": 30,
+    "category": "ropa",
+    "thumbnails": []
+  },
+  {
+    "id": 2,
+    "title": "Jogger Adidas Negro",
+    "description": "Pantalón jogger Adidas con ajuste cómodo y moderno",
+    "code": "JGAD-BLK05",
+    "price": 49.99,
+    "status": true,
+    "stock": 40,
+    "category": "ropa",
+    "thumbnails": []
+  },
+  {
+    "id": 6,
+    "title": "Zapatillas Nike Air Max",
+    "description": "Zapatillas Nike con amortiguación Air Max para mayor comodidad",
+    "code": "ZPNK-AIR06",
+    "price": 130,
+    "status": true,
+    "stock": 15,
+    "category": "calzado",
+    "thumbnails": []
+  },
+  {
+    "id": 7,
+    "title": "Pantalón Chino Beige Dockers",
+    "description": "Pantalón chino beige de la marca Dockers, ideal para ocasiones casuales",
+    "code": "PCHN-DCK07",
+    "price": 55.99,
+    "status": true,
+    "stock": 20,
+    "category": "ropa",
+    "thumbnails": []
+  }
+]
